@@ -7,6 +7,7 @@
 
 // Pins
 #define BUTTON_PIN 19
+#define NEW_FILE_PIN 18
 #define LSENSOR_PIN A3
 #define DHTPIN 21
 #define RLED_PIN 16
@@ -14,11 +15,12 @@
 #define CHIP_SELECT 10
 
 // Constants
-#define SAMPLE_PERIOD_MS 1000
+#define SAMPLE_PERIOD_MS 60000
 #define IS_FAHRENHEIT false
 
 // Instantiate a Bounce object for the buttons
 Bounce dButton = Bounce(); 
+Bounce eButton = Bounce();
 DHT dht(DHTPIN, DHT11);
 
 // Create a timer object that measures elapsed time in ms
@@ -49,6 +51,8 @@ void setup() {
   // After setting up the button, setup the Bounce instance:
   dButton.attach(BUTTON_PIN);
   dButton.interval(5); // debounce interval in ms
+  eButton.attach(NEW_FILE_PIN);
+  eButton.interval(5); // debounce interval in ms
   
   delay(100);
 
@@ -97,21 +101,28 @@ void setup() {
 void loop() {
   // Update so we know if the state of the button has changed:
   dButton.update();
+  eButton.update();
   
-  // If more than 1000ms has passed, record a new sensor value
+  // If more than 60000ms has passed, record a new sensor value
   if(timer > SAMPLE_PERIOD_MS){
     int light = analogRead(LSENSOR_PIN);
-    float humidity = dht.readHumidity();
     float temp = dht.readTemperature();
+    float humidity = dht.readHumidity();
     float heat = dht.computeHeatIndex(temp, humidity, false);
-    writeDataToSD(light, humidity, temp, heat);
-    timer = 0;
+    writeDataToSD(light, temp, humidity, heat);
+    timer = 0;  
   }
   // If the BUTTON_PIN has been grounded (i.e. we pressed the button)
   // then the value of dButton.fell() will be TRUE = 1
   // and we'll write the current Data Log file to the Serial Port
   if(dButton.fell()){
     printSDtoSerialPort();
+  }
+  // If the NEW_LINE_PIN has been grounded (i.e. we pressed the button)
+  // then the value of eButton.fell() will be TRUE = 1
+  // and we'll start a new file
+  if(dButton.fell()){
+    startNewLog();
   }
 }
 
