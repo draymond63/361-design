@@ -25,3 +25,4 @@ After making sure these two work, you should be able to run `main.ino`!
 - [x] Temperature seems to be should be in Celcius, but for some reason it's not. Let's fix this!
 - [x] If we only want to record every hour of data, we may want to measure every minute so we can store the average of that hour
 - [x] I've removed one button (for simplicity). What should the remaining button do in the prototype? Right now it simply prints to the serial monitor, but maybe it should start a new file so we can decide when we want to start recording?
+- [ ] Right now, averaging over the hour will start as soon as the program does. Do we want to use the RTC to make sure that we are in sync with the hours in a day? (e.g. 9am-10am as opposed to 9:23am-10:23am)

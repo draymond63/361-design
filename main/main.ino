@@ -311,7 +311,7 @@ void startNewLog() {
 
   // write the headers of log
   File dataFile = SD.open(filename.c_str());
-  writeToSD("Time, Light, Temperature (C), Humidity (%), Heat Index (C)");
+  writeToSD("Time, Light (Lux), Light STD, Heat Index (C), Heat Index STD");
 }
 
 void writeToSD(String line) {
